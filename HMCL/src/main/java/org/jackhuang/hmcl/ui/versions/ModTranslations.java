@@ -88,7 +88,8 @@ public enum ModTranslations {
     public Mod getModByName(String name) {
         if (StringUtils.isBlank(name) || !loadModSubnameMap()) return null;
 
-        return modSubnameMap.get(name);
+        String filteredName = name.replaceAll("[^a-zA-Z0-9]", "");
+        return modSubnameMap.get(filteredName);
     }
 
     public abstract String getMcmodUrl(Mod mod);
@@ -163,12 +164,9 @@ public enum ModTranslations {
         for (Mod mod : mods) {
             String name = mod.getSubname();
             if (StringUtils.isNotBlank(name) && !"examplemod".equals(name)) {
-                modSubnameMap.put(name, mod);
-                String illegalCharsPattern = "[^\\x00-\\x7F]"; // 匹配 ASCII 范围（0-127）之外的任何字符
-                if (name.matches(".* .*$") || Pattern.compile(illegalCharsPattern).matcher(name).find()) { // 如果 name 有且仅有一个空格
-                    name = name.replace(" ", "");
-                    name = name.replaceAll(illegalCharsPattern, "");
-                    modSubnameMap.put(name, mod);
+                String filteredName = name.replaceAll("[^a-zA-Z0-9]", "");
+                if (!filteredName.isEmpty()) {
+                    modSubnameMap.put(filteredName, mod);
                 }
             }
         }
