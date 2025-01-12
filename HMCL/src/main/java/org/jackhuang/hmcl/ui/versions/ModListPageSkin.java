@@ -278,7 +278,7 @@ class ModListPageSkin extends SkinBase<ModListPage> {
                 message.append(", ").append(i18n("archive.author")).append(": ").append(localModFile.getAuthors());
             this.message = message.toString();
 
-            this.mod = ModTranslations.MOD.getModByName(localModFile.getName());
+            this.mod = ModTranslations.MOD.getMod(localModFile.getName(), localModFile.getId());
         }
 
         String getTitle() {

@@ -68,7 +68,7 @@ public enum ModTranslations {
 
     private final String resourceName;
     private List<Mod> mods;
-    private Map<String, Mod> modSubnameMap; // mod name -> mod
+    private Map<String, Mod> modMap; // mod id and subname -> mod
     private Map<String, Mod> curseForgeMap; // curseforge id -> mod
     private List<Pair<String, Mod>> keywords;
     private int maxKeywordLength = -1;
@@ -85,11 +85,19 @@ public enum ModTranslations {
     }
 
     @Nullable
-    public Mod getModByName(String name) {
-        if (StringUtils.isBlank(name) || !loadModSubnameMap()) return null;
+    public Mod getMod(String subname, String id) {
+        if (!loadModMap()) return null;
 
-        String filteredName = name.replaceAll("[^a-zA-Z0-9]", "");
-        return modSubnameMap.get(filteredName);
+        if (StringUtils.isNotBlank(subname)) {
+            String filteredSubName = "subname-" + subname.replaceAll("[^a-zA-Z]", "");
+            return modMap.get(filteredSubName);
+        }
+
+        if (StringUtils.isNotBlank(id)) {
+            return modMap.get(id);
+        }
+
+        return null;
     }
 
     public abstract String getMcmodUrl(Mod mod);
@@ -151,8 +159,8 @@ public enum ModTranslations {
         return true;
     }
 
-    private boolean loadModSubnameMap() {
-        if (modSubnameMap != null) {
+    private boolean loadModMap() {
+        if (modMap != null) {
             return true;
         }
 
@@ -160,13 +168,18 @@ public enum ModTranslations {
             if (!loadFromResource()) return false;
         }
 
-        modSubnameMap = new HashMap<>();
+        modMap = new HashMap<>();
         for (Mod mod : mods) {
-            String name = mod.getSubname();
-            if (StringUtils.isNotBlank(name) && !"examplemod".equals(name)) {
-                String filteredName = name.replaceAll("[^a-zA-Z0-9]", "");
-                if (!filteredName.isEmpty()) {
-                    modSubnameMap.put(filteredName, mod);
+            String subname = mod.getSubname();
+            if (StringUtils.isNotBlank(subname) && !"examplemod".equals(subname)) {
+                String filteredSubName = "subname-" + subname.replaceAll("[^a-zA-Z]", "");
+                if (!filteredSubName.isEmpty()) {
+                    modMap.put(filteredSubName, mod);
+                }
+            }
+            for (String id : mod.getModIds()) {
+                if (StringUtils.isNotBlank(id) && !"examplemod".equals(id)) {
+                    modMap.put(id, mod);
                 }
             }
         }
