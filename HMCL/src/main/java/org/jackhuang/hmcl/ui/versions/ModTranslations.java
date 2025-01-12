@@ -24,7 +24,6 @@ import org.jackhuang.hmcl.util.io.IOUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.jackhuang.hmcl.util.logging.Logger.LOG;
